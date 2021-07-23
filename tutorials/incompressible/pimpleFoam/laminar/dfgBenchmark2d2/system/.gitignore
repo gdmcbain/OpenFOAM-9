@@ -1,0 +1,4 @@
+blockMeshDict
+*vertices.txt
+
+__pycache__/
