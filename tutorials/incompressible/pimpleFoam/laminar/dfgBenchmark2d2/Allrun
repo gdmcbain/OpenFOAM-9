@@ -4,5 +4,14 @@ cd ${0%/*} || exit 1
 
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
+cp system/blockMeshDict.orig system/blockMeshDict
+foamDictionary -entry vertices -value system/blockMeshDict | tr "()" " \n" > system/old_vertices.txt
+foamDictionary -entry edges -value system/blockMeshDict | tr -d "[:alpha:]" | tr "()" " \n" > system/old_edges.txt
+foamDictionary -entry blocks -value system/blockMeshDict | tr "h()" "\n " | tr -d "[:alpha:]" > system/old_blocks.txt
+runApplication -s vertices python system/vertices.py
+runApplication -s set.vertices foamDictionary -entry vertices -set "`cat system/vertices.txt`" system/blockMeshDict
+runApplication -s set.edges foamDictionary -entry edges -set "`cat system/edges.txt`" system/blockMeshDict
+foamDictionary -entry vertices -value system/blockMeshDict | tr "()" " \n" > system/new_vertices.txt
+foamDictionary -entry edges -value system/blockMeshDict | tr -d "arc" | tr "()" " \n" > system/new_edges.txt
 runApplication blockMesh
 runApplication $(getApplication)

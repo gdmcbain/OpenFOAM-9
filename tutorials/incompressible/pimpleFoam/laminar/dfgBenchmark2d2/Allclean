@@ -5,3 +5,4 @@ cd ${0%/*} || exit 1
 . $WM_PROJECT_DIR/bin/tools/CleanFunctions
 
 cleanCase
+rm -f system/blockMeshDict system/*vertices.txt system/*edges.txt system/*blocks.txt
