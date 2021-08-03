@@ -22,9 +22,11 @@ patches = {
     "up": vertices[:, 1] == corners["max"][1],
 }
 
-for v in block_vertices:
+for v, size in zip(block_vertices, block_size):
     if np.any(patches["right"][v]):
-        print(v, vertices[v])
+        size[0] = 100
+    if np.any(patches["down"][v]):
+        size[1] = 10
 
 patches["interior"] = np.logical_not(np.stack(list(patches.values()))).prod(
     0, dtype=bool
@@ -85,6 +87,12 @@ with open(Path(__file__).with_name("edges.txt"), "w") as fedges:
     for (start, finish), (x, y, z) in zip(termini, knots):
         fedges.write(f"arc {start} {finish} ({x} {y} {z})\n")
     fedges.write(")\n")
+
+with open(Path(__file__).with_name("blocks.txt"), "w") as fblocks:
+    fblocks.write("(\n")
+    for v, n in zip(block_vertices, block_size):
+        fblocks.write("hex (" + " ".join(f"{i}" for i in v) + ") (" + " ".join(f"{s}" for s in n) + ") simpleGrading (1 1 1)\n")
+    fblocks.write(")\n")
 
 fig, ax = subplots()
 ax.set_aspect(1.0)
