@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from matplotlib.pyplot import subplots
 import numpy as np
 
 vertices = np.genfromtxt(Path(__file__).with_name(f"old_vertices.txt"))
@@ -14,7 +13,6 @@ block_vertices, block_size, _ = np.split(blocks, [8, 11], axis=1)
 
 
 corners = {"min": vertices.min(0), "max": vertices.max(0)}
-print(corners)
 patches = {
     "left": vertices[:, 0] == corners["min"][0],
     "right": vertices[:, 0] == corners["max"][0],
@@ -31,13 +29,6 @@ for v, size in zip(block_vertices, block_size):
 patches["interior"] = np.logical_not(np.stack(list(patches.values()))).prod(
     0, dtype=bool
 )
-
-fig, ax = subplots()
-ax.set_aspect(1.0)
-ax.scatter(*vertices[~patches["interior"], :2].T, label="boundary")
-ax.scatter(*vertices[patches["interior"], :2].T, label="interior")
-ax.scatter(*knots.T[:2], label="knots")
-fig.savefig(Path(__file__).with_name("old_vertices.png"))
 
 vertices[patches["left"], 0] = 0.0
 vertices[patches["right"], 0] = 2.2
@@ -93,10 +84,3 @@ with open(Path(__file__).with_name("blocks.txt"), "w") as fblocks:
     for v, n in zip(block_vertices, block_size):
         fblocks.write("hex (" + " ".join(f"{i}" for i in v) + ") (" + " ".join(f"{s}" for s in n) + ") simpleGrading (1 1 1)\n")
     fblocks.write(")\n")
-
-fig, ax = subplots()
-ax.set_aspect(1.0)
-ax.scatter(*vertices[~patches["interior"], :2].T, label="boundary")
-ax.scatter(*vertices[patches["interior"], :2].T, label="interior")
-ax.scatter(*knots.T[:2], label="knots")
-fig.savefig(Path(__file__).with_suffix(".png"))
