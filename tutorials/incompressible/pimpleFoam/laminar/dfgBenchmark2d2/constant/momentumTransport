@@ -15,15 +15,4 @@ FoamFile
 
 simulationType laminar;
 
-laminar
-{
-    model        generalisedNewtonian;
-
-    viscosityModel CrossPowerLaw;
-
-    nuInf           10;
-    m               0.4;
-    n               3;
-}
-
 // ************************************************************************* //
