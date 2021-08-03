@@ -3,7 +3,7 @@ from pathlib import Path
 from matplotlib.pyplot import subplots
 import numpy as np
 
-vertices = np.genfromtxt(Path(__file__).with_name(f"old_{Path(__file__).stem}.txt"))
+vertices = np.genfromtxt(Path(__file__).with_name(f"old_vertices.txt"))
 
 arcs = np.genfromtxt(Path(__file__).with_name("old_edges.txt"))
 termini = arcs[:, :2].astype(np.uint)
@@ -74,7 +74,7 @@ def transform_circle(x: np.ndarray, indices: np.ndarray = None) -> None:
 
 transform_circle(vertices, patches["interior"])
 
-with open(Path(__file__).with_suffix(".txt"), "w") as fout:
+with open(Path(__file__).with_name("vertices.txt"), "w") as fout:
     fout.write("(\n")
     for x, y, z in vertices:
         fout.write(f"({x} {y} {z})\n")
