@@ -46,6 +46,7 @@ runTimeModifiable true;
 
 functions
 {
+  #includeFunc  vorticity
   systemCall1
   {
       type        systemCall;
@@ -53,6 +54,8 @@ functions
       writeCalls
       (
           "echo \*\*\* scraping data at time $(ls | sort -n | tail -1) \*\*\*"
+          "echo '*** and more ***'"
+          "VORTICITY=$(ls | sort -n | tail -1)/vorticity eval 'cat $VORTICITY' >>vorticity.txt"
       );
       writeControl writeTime;
       writeInterval 1;
