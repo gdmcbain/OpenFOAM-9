@@ -13,5 +13,6 @@ runApplication -s set.vertices foamDictionary -entry vertices -set "`cat system/
 runApplication -s set.edges foamDictionary -entry edges -set "`cat system/edges.txt`" system/blockMeshDict
 runApplication -s set.blocks foamDictionary -entry blocks -set "`cat system/blocks.txt`" system/blockMeshDict
 runApplication blockMesh
+
+mkfifo vorticity.txt
 runApplication $(getApplication)
-runApplication postProcess -field U -func vorticity
