@@ -44,5 +44,16 @@ timePrecision   6;
 
 runTimeModifiable true;
 
-
+functions
+{
+  systemCall1
+  {
+      type        systemCall;
+      libs        ("libutilityFunctionObjects.so");
+      writeCalls
+      (
+          "echo \*\*\* writing data \*\*\*"
+      );
+  }
+}
 // ************************************************************************* //
