@@ -52,8 +52,10 @@ functions
       libs        ("libutilityFunctionObjects.so");
       writeCalls
       (
-          "echo \*\*\* writing data \*\*\*"
+          "echo \*\*\* scraping data at time $(ls | sort -n | tail -1) \*\*\*"
       );
+      writeControl writeTime;
+      writeInterval 1;
   }
 }
 // ************************************************************************* //
