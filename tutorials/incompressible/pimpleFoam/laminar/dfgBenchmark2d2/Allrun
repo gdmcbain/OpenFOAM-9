@@ -14,5 +14,4 @@ runApplication -s set.edges foamDictionary -entry edges -set "`cat system/edges.
 runApplication -s set.blocks foamDictionary -entry blocks -set "`cat system/blocks.txt`" system/blockMeshDict
 runApplication blockMesh
 
-mkfifo vorticity.txt
 runApplication $(getApplication)
