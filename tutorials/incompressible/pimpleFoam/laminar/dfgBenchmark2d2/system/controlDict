@@ -47,15 +47,24 @@ runTimeModifiable true;
 functions
 {
   #includeFunc  vorticity
+  #includeFunc writeObjects(vorticity)
+  suppressOutput
+  {
+    type writeObjects;
+    libs ("libutilityFunctionObjects.so");
+    objects (U p phi);
+    writeOption noWrite;
+  }
   systemCall1
   {
       type        systemCall;
       libs        ("libutilityFunctionObjects.so");
       writeCalls
       (
-          "echo \*\*\* scraping data at time $(ls | sort -n | tail -1) \*\*\*"
+          "echo \*\*\* scraping data at time $(ls -d [0-9]* | sort -n | tail -1) \*\*\*"
           "echo '*** and more ***'"
-          "VORTICITY=$(ls | sort -n | tail -1)/vorticity eval 'cat $VORTICITY' >>vorticity.txt"
+          "VORTICITY=$(ls -d [0-9]* | sort -n | tail -1)/vorticity eval 'cat $VORTICITY && rm $VORTICITY' >>vorticity.txt"
+          "echo '*** done ***'"
       );
       writeControl writeTime;
       writeInterval 1;
