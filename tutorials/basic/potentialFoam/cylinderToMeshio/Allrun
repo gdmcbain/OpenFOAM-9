@@ -12,6 +12,6 @@ runApplication -s potential python system/potential.py quads.msh
 
 # OpenFOAM parallal path
 
-runApplication -s left python system/left.py
+runApplication -s left python system/left.py left.json
 runApplication potentialFoam -writePhi
 runApplication foamToVTK
