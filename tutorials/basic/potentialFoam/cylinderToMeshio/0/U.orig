@@ -22,7 +22,7 @@ internalField   uniform (0 0 0);
 
 boundaryField
 {
-    (down|up)
+    "(down|up)"
     {
         type            symmetryPlane;
     }
