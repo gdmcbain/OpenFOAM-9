@@ -1,10 +1,11 @@
+from pathlib import Path
+
 import skfem
 import skfem.io.json
 
-
-def main(meshfile: str) -> None:
+def main(meshfile: Path) -> None:
     left_mesh = skfem.io.json.from_file(meshfile)
-    left_basis = skfem.InteriorBasis(left_mesh, skfem.ElementLineP0())
+    left_basis = skfem.CellBasis(left_mesh, skfem.ElementLineP0())
     inlet_velocity = skfem.project(
         lambda y: (left_mesh.p.max() - y[0]) ** 2, basis_to=left_basis
     )
@@ -19,9 +20,8 @@ def main(meshfile: str) -> None:
 if __name__ == "__main__":
 
     from argparse import ArgumentParser
-    from pathlib import Path
 
     parser = ArgumentParser()
-    parser.add_argument("meshfile", type=Path)
+    parser.add_argument("--meshfile", type=Path, default=Path(__file__).stem + ".json")
     args = parser.parse_args()
     main(args.meshfile)
