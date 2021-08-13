@@ -240,9 +240,7 @@ class PolyMesh:
             boundary_points = np.searchsorted(
                 front_points, patch_faces[np.isin(patch_faces, front_points).nonzero()]
             )
-            mask = np.logical_and(
-                *np.isin(mtmp.facets, boundary_points)
-            )
+            mask = np.logical_and(*np.isin(mtmp.facets, boundary_points))
             if np.any(mask):
                 boundaries[label] = mask.nonzero()[0]
 
