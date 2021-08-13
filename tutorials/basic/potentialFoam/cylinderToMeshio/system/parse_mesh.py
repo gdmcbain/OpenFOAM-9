@@ -17,22 +17,15 @@ def main(
     case: Optional[Path] = Path("."),
 ) -> None:
 
-    poly_mesh = PolyMesh.read(case)
-    mio = poly_mesh.to_meshioquad(front_patches, transform=transform)
-    meshio.write(mesh_file, mio, file_format="gmsh22", binary=False)
-
-    mesh = poly_mesh.to_meshquad(front_patches, transform=transform)
+    mesh = PolyMesh.read(case).to_meshquad(front_patches, transform=transform)
     mesh.save(Path(mesh_file).with_suffix(".xdmf"))
 
-    left_lines = mio.cells[1].data[
-        mio.cell_data["gmsh:physical"][1] == mio.field_data["left"][0]
-    ]
-    left_points, inverse = np.unique(left_lines, return_inverse=True)
-    left_mesh = skfem.MeshLine(
-        mio.points[left_points, 1], inverse.reshape(left_lines.shape).T
+    left_basis = skfem.BoundaryFacetBasis(
+        mesh, skfem.ElementQuad0(), facets=mesh.boundaries["left"]
     )
-
-    skfem.io.json.to_file(left_mesh, "left.json")
+    skfem.io.json.to_file(
+        left_basis.trace(left_basis.zeros(), lambda x: x[1])[0].mesh, "left.json"
+    )
 
 
 if __name__ == "__main__":
