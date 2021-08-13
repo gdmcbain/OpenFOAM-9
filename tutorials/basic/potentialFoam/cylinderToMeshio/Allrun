@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 cd ${0%/*} || exit 1    # Run from this directory
 
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
@@ -8,10 +8,14 @@ runApplication -s parse_mesh python system/parse_mesh.py system/cylinder.json
 
 # scikit-fem parallel path
 
-runApplication -s potential python system/potential.py quads.msh
+coproc runApplication -s potential python system/potential.py quads.msh
 
 # OpenFOAM parallal path
 
 runApplication -s left python system/left.py left.json
 runApplication potentialFoam -writePhi
 runApplication foamToVTK
+
+# end of parallel paths
+
+wait  # for scikit-fem
