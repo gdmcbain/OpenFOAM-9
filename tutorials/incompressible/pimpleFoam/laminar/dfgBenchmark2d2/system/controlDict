@@ -61,10 +61,7 @@ functions
       libs        ("libutilityFunctionObjects.so");
       writeCalls
       (
-          "echo \*\*\* scraping data at time $(ls -d [0-9]* | sort -n | tail -1) \*\*\*"
-          "echo '*** and more ***'"
           "VORTICITY=$(ls -d [0-9]* | sort -n | tail -1)/vorticity eval 'cat $VORTICITY && rm $VORTICITY' >>vorticity.txt"
-          "echo '*** done ***'"
       );
       writeControl writeTime;
       writeInterval 1;
