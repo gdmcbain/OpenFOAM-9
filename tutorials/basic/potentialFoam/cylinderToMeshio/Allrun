@@ -14,7 +14,6 @@ coproc runApplication -s potential python system/potential.py quads.msh
 
 runApplication -s left python system/left.py
 runApplication potentialFoam -writePhi
-runApplication foamToVTK
 
 # end of parallel paths
 
