@@ -12,21 +12,24 @@ from polymesh import PolyMesh
 
 def main(
     mesh_file: str,
-    front_patches: Optional[List[str]] = None,
+    front_patches: List[str],
+    transform: np.ndarray,
     case: Optional[Path] = Path("."),
-    transform: Optional[np.ndarray] = None,
 ) -> None:
 
     poly_mesh = PolyMesh.read(case)
-    mesh = poly_mesh.to_meshquad(front_patches, transform=transform)
-    meshio.write(mesh_file, mesh, file_format="gmsh22", binary=False)
+    mio = poly_mesh.to_meshioquad(front_patches, transform=transform)
+    meshio.write(mesh_file, mio, file_format="gmsh22", binary=False)
 
-    left_lines = mesh.cells[1].data[
-        mesh.cell_data["gmsh:physical"][1] == mesh.field_data["left"][0]
+    mesh = poly_mesh.to_meshquad(front_patches, transform=transform)
+    mesh.save(Path(mesh_file).with_suffix(".xdmf"))
+
+    left_lines = mio.cells[1].data[
+        mio.cell_data["gmsh:physical"][1] == mio.field_data["left"][0]
     ]
     left_points, inverse = np.unique(left_lines, return_inverse=True)
     left_mesh = skfem.MeshLine(
-        mesh.points[left_points, 1], inverse.reshape(left_lines.shape).T
+        mio.points[left_points, 1], inverse.reshape(left_lines.shape).T
     )
 
     skfem.io.json.to_file(left_mesh, "left.json")
@@ -40,7 +43,10 @@ if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--case", type=Path, default=Path("."))
     parser.add_argument(
-        "json", type=Path, help="name of file containing input parameters"
+        "--json",
+        type=Path,
+        help="name of file containing input parameters",
+        default=Path(__file__).with_name("cylinder.json"),
     )
 
     args = parser.parse_args()

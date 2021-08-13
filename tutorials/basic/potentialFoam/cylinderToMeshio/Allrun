@@ -4,7 +4,7 @@ cd ${0%/*} || exit 1    # Run from this directory
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
 runApplication blockMesh
-runApplication -s parse_mesh python system/parse_mesh.py system/cylinder.json
+runApplication -s parse_mesh python system/parse_mesh.py
 
 # scikit-fem parallel path
 

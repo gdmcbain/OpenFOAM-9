@@ -8,6 +8,7 @@ from more_itertools import chunked
 import numpy as np
 
 import meshio
+import skfem
 
 
 @dataclass
@@ -154,13 +155,12 @@ class PolyMesh:
 
         return index, note
 
-    def to_meshquad(
+    def to_meshioquad(
         self,
-        front_patches: Optional[List[str]] = None,
-        transform: Optional[np.ndarray] = None,
+        front_patches: List[str],
+        transform: np.ndarray,
     ) -> meshio.Mesh:
 
-        front_patches = ["front"] if front_patches is None else front_patches
         front_faces = np.concatenate(
             [self.faces[self.boundary[label]] for label in front_patches]
         )
@@ -202,9 +202,7 @@ class PolyMesh:
         front_owners = np.concatenate(
             [self.owner[self.boundary[label]] for label in front_patches]
         )
-        points = self.points[front_points]
-        if transform:
-            points @= np.hstack([transform, np.zeros((3, 1))])
+        points = self.points[front_points] @ np.hstack([transform, np.zeros((3, 1))])
         return meshio.Mesh(
             points,
             [("quad", inverse.reshape(front_faces.shape)), ("line", lines)],
@@ -215,6 +213,47 @@ class PolyMesh:
             },
             field_data=physical_names,
         )
+
+    def to_meshquad(
+        self,
+        front_patches: List[str],
+        transform: np.ndarray,
+    ) -> meshio.Mesh:
+
+        front_faces = np.concatenate(
+            [self.faces[self.boundary[label]] for label in front_patches]
+        )
+        front_points, indices, inverse = np.unique(
+            front_faces, return_index=True, return_inverse=True
+        )
+
+        mtmp = skfem.MeshQuad(
+            (self.points[front_points] @ transform).T,
+            inverse.reshape(front_faces.shape[::-1], order="F"),
+        )
+
+        boundaries = {}
+        for label, patch in self.boundary.items():
+            if label in front_patches:
+                continue
+            patch_faces = self.faces[patch]
+            boundary_points = np.searchsorted(
+                front_points, patch_faces[np.isin(patch_faces, front_points).nonzero()]
+            )
+            mask = np.logical_and(
+                *np.isin(mtmp.facets, boundary_points)
+            )
+            if np.any(mask):
+                boundaries[label] = mask.nonzero()[0]
+
+        subdomains = {}
+        cell_index = 0
+        for label in front_patches:
+            ncells = self.boundary[label].stop - self.boundary[label].start
+            subdomains[label] = cell_index + np.arange(ncells)
+            cell_index += ncells
+
+        return skfem.MeshQuad(mtmp.p, mtmp.t, boundaries, subdomains)
 
 
 if __name__ == "__main__":

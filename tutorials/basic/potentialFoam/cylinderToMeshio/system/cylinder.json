@@ -1,3 +1,5 @@
 {
-    "mesh_file": "quads.msh"
+    "mesh_file": "quads.msh",
+    "front_patches": ["front"],
+    "transform": [[1, 0], [0, 1], [0, 0]]
 }
