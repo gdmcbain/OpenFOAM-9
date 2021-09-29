@@ -9,21 +9,16 @@ FoamFile
 {
     format      ascii;
     class       dictionary;
-    object      radiationProperties;
+    object      limitTemperature;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-radiationModel  none; // opaqueSolid;
-
-absorptionEmissionModel constant;
-
-constantCoeffs
+limitT
 {
-    absorptivity    absorptivity [ 0 -1 0 0 0 0 0 ] 0.0;
-    emissivity      emissivity [ 0 -1 0 0 0 0 0 ] 0.1;
-    E               E [ 1 -1 -3 0 0 0 0 ] 0;
+    type       limitTemperature;
+    min        200;
+    max        6000;
+    selectionMode all;
 }
 
-scatterModel    none;
-
-// ************************************************************************* //
+//************************************************************************** //
